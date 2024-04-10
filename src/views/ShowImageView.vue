@@ -11,19 +11,19 @@ export default class ShowImageView extends Vue {
 
 <template>
   <img 
-    src="../../esignoFooterLogo.png" 
+    src="/esignoFooterLogo.png" 
     alt="footerLogo"
   >
   <img 
-    src="../../esignoLogo.png" 
+    src="/esignoLogo.png" 
     alt="esignoLogo"
   >
   <img 
-    src="../../linkedInLogo.png" 
+    src="/linkedInLogo.png" 
     alt="linkedInLogo"
   >
   <img 
-    src="../../pageIcon.png" 
+    src="/pageIcon.png" a
     alt="pageIcon"
   >
 </template>
