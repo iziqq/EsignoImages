@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    "vue",
+    "vuejs-accessibility"
+  ],
+  "extends": [
+    "plugin:cypress/recommended",
+    "plugin:vue/vue3-recommended",
+    "@vue/typescript/recommended",
+    "plugin:vuejs-accessibility/recommended"
+  ]
+}

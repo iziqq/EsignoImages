@@ -1,0 +1,105 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --vt-c-white: #ffffff;
+  --vt-c-white-soft: #f8f8f8;
+  --vt-c-white-mute: #f2f2f2;
+
+  --vt-c-black: #181818;
+  --vt-c-black-soft: #222222;
+  --vt-c-black-mute: #282828;
+
+  --vt-c-indigo: #2c3e50;
+
+  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+  --vt-c-text-light-1: var(--vt-c-indigo);
+  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+  --vt-c-text-dark-1: var(--vt-c-white);
+  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+  /* Fonts */
+  --font-caption: Geomanist;
+  --font-label: Inter;
+
+  /* Colors */
+  --primary-blue-dark: #327DDA;
+  --status-green-dark: #409230;
+  --text-white: #FFF;
+  --text-black: #2D2D2D;
+  --components-light-gray-74: #BDBDBD;
+  --status-negative-light:  #FBDCE0;
+  --status-negative: #E4162F;
+  --status-negative-hover: #CD142A;
+  --status-pending-light: #FBEADB;
+  --status-peding: #E47410;
+  --status-positive-light: #E2EFE0;
+  --status-positive: #409230;
+  --status-neutral-light: #E0ECF9;
+  --primary-blue-dark-hover: #2265BA;
+  --error-color: #E4162F;
+  --components-dark-gray-53: #888888;
+  --components-dark-gray-30: #4D4D4D;
+  --components-white: #FFF;
+  --text-darker-gray:  #595959;
+  --grayscale-white: #FFFFFF;
+  --btn-hover-discard: #88888826;
+  --btn-hover-outlined: #EAF2FA;
+  --btn-click-outlined: #CEE4FD;
+  --input-switch-false: #E6E6E6;
+  --text-dark-gray: #888;
+  --components-gray-87: #DEDEDE;
+  --components-black-18: #2D2D2D;
+  --components-gray-95: #F2F2F2;
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-background: var(--vt-c-white);
+  --color-background-soft: var(--vt-c-white-soft);
+  --color-background-mute: var(--vt-c-white-mute);
+
+  --color-border: var(--vt-c-divider-light-2);
+  --color-border-hover: var(--vt-c-divider-light-1);
+
+  --color-heading: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-text-light-1);
+
+  --section-gap: 160px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+  font-size: 14px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

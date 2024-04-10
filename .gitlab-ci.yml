@@ -1,0 +1,108 @@
+stages:
+    - Code Quality
+    - Build
+    - Publish
+    - Deploy
+
+variables:
+    TMP_IMAGE_NAME: "container:build"
+
+workflow:
+    rules:
+        - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+
+# Check code passes EsLint
+es-lint:
+    image: "node:lts-alpine"
+    stage: "Code Quality"
+    script:
+        - npm install
+        - npm run lint
+
+# Build OCI container with buildah
+container-build:
+    image: quay.io/buildah/stable
+    stage: Build
+    artifacts:
+        paths:
+            - container.tar
+    script:
+        - buildah bud -t ${TMP_IMAGE_NAME} .
+        # Save the image to file for other stages
+        - buildah push ${TMP_IMAGE_NAME} docker-archive:container.tar
+        # Clean up
+        - buildah rmi ${TMP_IMAGE_NAME}
+
+# Detect version of container based on project files and Git environment
+version-detection:
+    image: "artefacts.nubeo.eu:443/semver-detector"
+    stage: Build
+    artifacts:
+        paths:
+            - version.txt
+    script:
+        - semver-detector package-json --gitlab --friendly-separator > version.txt
+
+# Push container to repository with version
+container-publish-with-version:
+    image: "quay.io/buildah/stable"
+    stage: Publish
+    dependencies:
+        - "version-detection"
+        - "container-build"
+    script:
+        - version="$(cat version.txt)"
+        - image="${CI_REGISTRY}/${CONTAINER_IMAGE}:${version}"
+        - buildah pull docker-archive:container.tar
+        - buildah tag ${TMP_IMAGE_NAME} ${image}
+        - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+        - buildah push "${image}"
+    rules:
+        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+          when: always
+        - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+          when: manual
+
+container-publish-latest:
+    image: "quay.io/buildah/stable"
+    stage: Publish
+    dependencies:
+        - "container-build"
+    script:
+        - image="${CI_REGISTRY}/${CONTAINER_IMAGE}:latest"
+        - buildah pull docker-archive:container.tar
+        - buildah tag ${TMP_IMAGE_NAME} ${image}
+        - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+        - buildah push "${image}"
+    rules:
+        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+          when: always
+        - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+          when: never
+
+octopus-deploy:
+    image: octopuslabs/gitlab-octocli
+    stage: "Deploy"
+    dependencies:
+        - "version-detection"
+    script:
+        - version="$(cat version.txt)"
+        - channel="${CI_COMMIT_BRANCH}"
+        - >
+          octo create-channel
+          --server "${OCTOPUS_URL}"
+          --apikey "${OCTOPUS_API_KEY}"
+          --project "${OCTOPUS_PROJECT}"
+          --channel "${channel}"
+          --update-existing
+        - >
+          octo create-release
+          --server "${OCTOPUS_URL}"
+          --apikey "${OCTOPUS_API_KEY}"
+          --project "${OCTOPUS_PROJECT}"
+          --version "${version}"
+          --packageVersion "${version}"
+          --channel "${channel}"
+          --tenanttag "Customer/ALL-CUSTOMERS"
+          --deployto "DEV"
+          --progress
